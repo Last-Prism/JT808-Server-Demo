@@ -8,22 +8,35 @@ namespace JT808Server
 {
     internal class Program
     {
+        internal static WebSocketServerManager wsManager;
+
         static void Main(string[] args)
         {
-            IpData ipData = FileLoader.ReadFromFile();
+            IpData ipData = CustomIpConfig.ReadFromFile();
 
-            int port = ipData.Port; // You can change this port if needed
-            string ip = ipData.IP;
-            var listener = new TcpListener(IPAddress.Parse(ip), port);
-            listener.Start();
-            Console.WriteLine($"JT808 Server started on port {port}. Waiting for connections...");
-
-            while (true)
+            Task.Run(() =>
             {
-                var client = listener.AcceptTcpClient();
-                Console.WriteLine($"New {DateTime.Now}: {client.Client.RemoteEndPoint}");
-                Task.Run(() => HandleClient(client));
-            }
+                wsManager = new WebSocketServerManager();
+                wsManager.Start(ipData.Ws_Port);
+            });
+
+            Task.Run(() =>
+            {
+                int port = ipData.GPS_Port;
+                string ip = ipData.IP;
+                var listener = new TcpListener(IPAddress.Parse(ip), port);
+                listener.Start();
+                Console.WriteLine($"JT808 Server started on {ip}:{port}. Waiting for connections...");
+
+                while (true)
+                {
+                    var client = listener.AcceptTcpClient();
+                    Console.WriteLine($"New {DateTime.Now}: {client.Client.RemoteEndPoint}");
+                    Task.Run(() => HandleClient(client));
+                }
+            });
+
+            Thread.Sleep(Timeout.Infinite); // 保证主线程不退出
         }
 
         static void HandleClient(TcpClient client)

@@ -1,6 +1,7 @@
 ﻿using JT808.Protocol;
 using JT808.Protocol.Enums;
 using JT808.Protocol.MessageBody;
+using JT808Server.Model;
 using JT808Server.Msg;
 using System.Net.Sockets;
 
@@ -39,22 +40,25 @@ namespace JT808Server
 
             try
             {
-                // 终端通用应答
+                // 终端注册
                 if (id == JT808MsgId._0x0100)
                 {
                     // 处理注册包
                     var msg = PackageFactory.PlatformRegisterReply(package);
                     SendMsg(stream, msg);
                 }
+                // 终端鉴权
                 else if (id == JT808MsgId._0x0102)
                 {
                     var msg = PackageFactory.ClientRootReply(package);
                     SendMsg(stream, msg);
                 }
+                // 终端主动发送定位数据
                 else if (id == JT808MsgId._0x0200)
                 {
                     JT808_0x0200 posData = (JT808_0x0200)package.Bodies;
-                    Console.WriteLine(posData.StatusFlag + "| " + posData.Lng + "  " + posData.Lat);
+                    
+                    Program.wsManager.BroadcastJT808PosData(JT808PosData.Serialize(posData));
                 }
             }
             catch (Exception e)

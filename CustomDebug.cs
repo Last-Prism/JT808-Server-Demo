@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace JT808Server
 {
-    internal class JT808_PositionModel
+    internal class CustomDebug
     {
+
     }
 }
