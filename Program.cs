@@ -1,7 +1,4 @@
-﻿using JT808.Protocol.Enums;
-using JT808Server.Msg;
-using Newtonsoft.Json;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 
 namespace JT808Server

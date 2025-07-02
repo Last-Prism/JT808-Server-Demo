@@ -11,8 +11,6 @@ namespace JT808Server.Msg
 {
     internal class PackageFactory
     {
-        Dictionary<string, string> codeCache = new Dictionary<string, string>();
-
         /// <summary>
         /// 注册用
         /// </summary>
